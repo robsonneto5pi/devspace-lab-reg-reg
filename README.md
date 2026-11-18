@@ -74,7 +74,34 @@ git clone https://github.com/ReceitaFederal/calculadora-rtc-regime-regular.git
 cd calculadora-rtc-regime-regular
 ```
 
-### 3. Gerar o Banco de Dados (obrigatório)
+### 3. Abrir no OpenShift Dev Spaces
+
+Este repositório inclui o arquivo [`devfile.yaml`](devfile.yaml), preparado para criar um workspace Java 21/Spring Boot com IBM Bob e Ramalama.
+
+1. No Dev Spaces, use **Create Workspace** → **Import from Git**.
+2. Informe `https://github.com/ReceitaFederal/calculadora-rtc-regime-regular.git`.
+3. Aguarde a inicialização dos componentes `udi` e `ramalama`.
+4. Confirme o ambiente no terminal do workspace:
+
+```bash
+java -version
+./mvnw --version
+curl -fsS http://localhost:8080/api/tags
+```
+
+O modelo local configurado é `qwen2.5-coder:7b`, servido em `http://localhost:8080`. Abra a pasta `/projects/calculadora-rtc-regime-regular` no editor.
+
+Comandos úteis no workspace:
+
+```bash
+./mvnw flyway:migrate -Dflyway.configFiles=./flyway/flyway-pro.conf --batch-mode --errors
+./mvnw clean test jacoco:report
+./mvnw spring-boot:run -Dspring-boot.run.profiles=offline
+```
+
+O modelo 7B exige recursos maiores que o modelo 3B da configuração anterior: considere pelo menos 12 GiB de memória e CPU disponível para o workspace.
+
+### 4. Gerar o Banco de Dados (obrigatório)
 
 O perfil `offline` lê o banco `./calculadora/db/calculadora-pro.db`, definido por `application.db.filename` em `application-offline.yml`. O caminho é relativo à raiz do projeto e o banco é aberto em modo somente leitura.
 
@@ -98,7 +125,7 @@ mvnw.cmd flyway:migrate -Dflyway.configFiles=flyway\flyway-pro.conf --batch-mode
 
 Confirme que o arquivo foi criado com `ls -lah ./calculadora/db/calculadora-pro.db` (Linux/macOS) ou `dir calculadora\db\calculadora-pro.db` (Windows).
 
-### 4. Compilar e Executar os Testes
+### 5. Compilar e Executar os Testes
 
 Os testes exigem o banco gerado no passo 3, pois a maioria são testes de integração com o perfil `testes`.
 
@@ -118,7 +145,7 @@ mvnw.cmd clean test jacoco:report
 
 O relatório de cobertura fica em `target/site/jacoco/index.html`.
 
-### 5. Executar a Aplicação com perfil Offline (spring-boot:run)
+### 6. Executar a Aplicação com perfil Offline (spring-boot:run)
 
 **Linux/macOS:**
 
@@ -134,7 +161,7 @@ mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=offline"
 
 A aplicação estará disponível em `http://localhost:8080/api`.
 
-### 6. Gerar o JAR e Executar com java -jar (perfil offline)
+### 7. Gerar o JAR e Executar com java -jar (perfil offline)
 
 **Linux/macOS:**
 

@@ -1,0 +1,108 @@
+schemaVersion: 2.2.0
+metadata:
+  name: devspace-lab-reg-reg
+attributes:
+  controller.devfile.io/storage-type: ephemeral
+
+projects:
+  - name: calculadora-rtc-regime-regular
+    git:
+      remotes:
+        origin: 'https://github.com/ReceitaFederal/calculadora-rtc-regime-regular.git'
+      checkoutFrom:
+        revision: main
+
+components:
+  - name: udi
+    container:
+      image: quay.io/devfile/universal-developer-image:ubi8-latest
+      memoryLimit: 4Gi
+      memoryRequest: 512Mi
+      cpuLimit: "2"
+      cpuRequest: 100m
+      mountSources: true
+      sourceMapping: /projects
+      env:
+        - name: MAVEN_OPTS
+          value: '-Dfile.encoding=UTF-8'
+      endpoints:
+        - exposure: public
+          name: calculadora-api
+          protocol: http
+          targetPort: 8080
+
+  - name: ramalama
+    attributes:
+      container-overrides:
+        resources:
+          limits:
+            cpu: "4"
+            memory: 12Gi
+          requests:
+            cpu: 500m
+            memory: 8Gi
+    container:
+      image: quay.io/ramalama/ramalama:latest
+      env:
+        - name: HOME
+          value: /models
+      args:
+        - "ramalama"
+        - "--nocontainer"
+        - "--store"
+        - "/models"
+        - "serve"
+        - "--host"
+        - "0.0.0.0"
+        - "--port"
+        - "8080"
+        - "ollama://qwen2.5-coder:7b"
+      volumeMounts:
+        - name: ramalama-models
+          path: /models
+      endpoints:
+        - exposure: public
+          name: ramalamaserve
+          protocol: http
+          targetPort: 8080
+
+  - name: ramalama-models
+    volume:
+      size: 12Gi
+
+commands:
+  - id: copyconfig
+    exec:
+      component: udi
+      commandLine: "mkdir -p /home/user/.continue && curl -fsSL https://raw.githubusercontent.com/remingtonsb/cde-ramalama-continue/master/continue-config.yaml -o /home/user/.continue/config.yaml && sed -i 's/qwen2\.5-coder:3b/qwen2.5-coder:7b/g' /home/user/.continue/config.yaml && echo '✓ Continue config OK (Qwen 2.5 Coder 7B)'"
+
+  - id: verify-java
+    exec:
+      component: udi
+      commandLine: "cd /projects/calculadora-rtc-regime-regular && java -version && ./mvnw --version"
+
+  - id: migrate-db
+    exec:
+      component: udi
+      commandLine: "cd /projects/calculadora-rtc-regime-regular && mkdir -p ./calculadora/db && ./mvnw flyway:migrate -Dflyway.configFiles=./flyway/flyway-pro.conf --batch-mode --errors"
+
+  - id: test
+    exec:
+      component: udi
+      commandLine: "cd /projects/calculadora-rtc-regime-regular && ./mvnw clean test jacoco:report"
+
+  - id: run-offline
+    exec:
+      component: udi
+      commandLine: "cd /projects/calculadora-rtc-regime-regular && ./mvnw spring-boot:run -Dspring-boot.run.profiles=offline"
+
+  - id: setup-java21
+    exec:
+      component: udi
+      commandLine: "source ~/.sdkman/bin/sdkman-init.sh && sdk install java 21.0.13.0+9-tem && sdk default java 21.0.13.0+9-tem && java -version"
+
+events:
+  postStart:
+    - setup-java21
+    - migrate-db
+    - copyconfig
