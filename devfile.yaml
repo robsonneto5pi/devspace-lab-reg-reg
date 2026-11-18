@@ -69,15 +69,12 @@ commands:
   - id: setup
     exec:
       component: udi
-      commandLine: >-
-        source ~/.sdkman/bin/sdkman-init.sh &&
-        sdk install java 21.0.13.0+9-tem 2>/dev/null || true &&
-        sdk default java 21.0.13.0+9-tem &&
-        mkdir -p /home/user/.continue &&
-        curl -fsSL https://raw.githubusercontent.com/remingtonsb/cde-ramalama-continue/master/continue-config.yaml
-        -o /home/user/.continue/config.yaml &&
-        sed -i 's/qwen2\.5-coder:3b/qwen2.5-coder:7b/g' /home/user/.continue/config.yaml &&
-        echo 'Setup completo: Java 21 + Continue configurado'
+      commandLine: "mkdir -p /home/user/.continue && curl -fsSL https://raw.githubusercontent.com/remingtonsb/cde-ramalama-continue/master/continue-config.yaml -o /home/user/.continue/config.yaml && sed -i 's/qwen2\\.5-coder:3b/qwen2.5-coder:7b/g' /home/user/.continue/config.yaml && echo OK"
+
+  - id: setup-java21
+    exec:
+      component: udi
+      commandLine: "source ~/.sdkman/bin/sdkman-init.sh 2>/dev/null; sdk install java 21.0.13.0+9-tem 2>/dev/null; sdk default java 21.0.13.0+9-tem 2>/dev/null; java -version"
 
   - id: verify-java
     exec:
