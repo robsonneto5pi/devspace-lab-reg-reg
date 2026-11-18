@@ -36,11 +36,11 @@ components:
       container-overrides:
         resources:
           limits:
-            cpu: "4"
-            memory: 12Gi
-          requests:
-            cpu: 500m
+            cpu: "2"
             memory: 8Gi
+          requests:
+            cpu: 200m
+            memory: 4Gi
     container:
       image: quay.io/ramalama/ramalama:latest
       env:
@@ -71,10 +71,18 @@ components:
       size: 12Gi
 
 commands:
-  - id: copyconfig
+  - id: setup
     exec:
       component: udi
-      commandLine: "mkdir -p /home/user/.continue && curl -fsSL https://raw.githubusercontent.com/remingtonsb/cde-ramalama-continue/master/continue-config.yaml -o /home/user/.continue/config.yaml && sed -i 's/qwen2\.5-coder:3b/qwen2.5-coder:7b/g' /home/user/.continue/config.yaml && echo 'OK Continue config OK (Qwen 2.5 Coder 7B)'"
+      commandLine: >-
+        source ~/.sdkman/bin/sdkman-init.sh &&
+        sdk install java 21.0.13.0+9-tem 2>/dev/null || true &&
+        sdk default java 21.0.13.0+9-tem &&
+        mkdir -p /home/user/.continue &&
+        curl -fsSL https://raw.githubusercontent.com/remingtonsb/cde-ramalama-continue/master/continue-config.yaml
+        -o /home/user/.continue/config.yaml &&
+        sed -i 's/qwen2\.5-coder:3b/qwen2.5-coder:7b/g' /home/user/.continue/config.yaml &&
+        echo 'Setup completo: Java 21 + Continue configurado'
 
   - id: verify-java
     exec:
@@ -96,13 +104,6 @@ commands:
       component: udi
       commandLine: "cd /projects/calculadora-rtc-regime-regular && ./mvnw spring-boot:run -Dspring-boot.run.profiles=offline"
 
-  - id: setup-java21
-    exec:
-      component: udi
-      commandLine: "source ~/.sdkman/bin/sdkman-init.sh && sdk install java 21.0.13.0+9-tem && sdk default java 21.0.13.0+9-tem && java -version"
-
 events:
   postStart:
-    - setup-java21
-    - migrate-db
-    - copyconfig
+    - setup
