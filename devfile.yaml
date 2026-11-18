@@ -29,7 +29,7 @@ components:
         - exposure: public
           name: calculadora-api
           protocol: http
-          targetPort: 8081
+          targetPort: 8080
 
   - name: ramalama
     attributes:
@@ -60,11 +60,6 @@ components:
       volumeMounts:
         - name: ramalama-models
           path: /models
-      endpoints:
-        - exposure: public
-          name: ramalamaserve
-          protocol: http
-          targetPort: 8080
 
   - name: ramalama-models
     volume:
