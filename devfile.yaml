@@ -74,7 +74,7 @@ commands:
   - id: copyconfig
     exec:
       component: udi
-      commandLine: "mkdir -p /home/user/.continue && curl -fsSL https://raw.githubusercontent.com/remingtonsb/cde-ramalama-continue/master/continue-config.yaml -o /home/user/.continue/config.yaml && sed -i 's/qwen2\.5-coder:3b/qwen2.5-coder:7b/g' /home/user/.continue/config.yaml && echo '✓ Continue config OK (Qwen 2.5 Coder 7B)'"
+      commandLine: "mkdir -p /home/user/.continue && curl -fsSL https://raw.githubusercontent.com/remingtonsb/cde-ramalama-continue/master/continue-config.yaml -o /home/user/.continue/config.yaml && sed -i 's/qwen2\.5-coder:3b/qwen2.5-coder:7b/g' /home/user/.continue/config.yaml && echo 'OK Continue config OK (Qwen 2.5 Coder 7B)'"
 
   - id: verify-java
     exec:
