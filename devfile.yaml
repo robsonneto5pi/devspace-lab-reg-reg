@@ -22,14 +22,14 @@ components:
       cpuRequest: 100m
       mountSources: true
       sourceMapping: /projects
-      env:
-        - name: MAVEN_OPTS
-          value: '-Dfile.encoding=UTF-8'
+
+        - name: SERVER_PORT
+          value: "8081"
       endpoints:
         - exposure: public
           name: calculadora-api
           protocol: http
-          targetPort: 8080
+          targetPort: 8081
 
   - name: ramalama
     attributes:
