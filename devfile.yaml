@@ -28,7 +28,7 @@ components:
       endpoints:
         - exposure: public
           name: calculadora-api
-          protocol: http
+          protocol: https
           targetPort: 8081
 
   - name: ramalama
