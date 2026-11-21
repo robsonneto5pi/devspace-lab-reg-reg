@@ -71,10 +71,10 @@ commands:
       component: udi
       commandLine: "mkdir -p /home/user/.continue && curl -fsSL https://raw.githubusercontent.com/remingtonsb/cde-ramalama-continue/master/continue-config.yaml -o /home/user/.continue/config.yaml && sed -i 's/qwen2\\.5-coder:3b/qwen2.5-coder:7b/g' /home/user/.continue/config.yaml && echo OK"
 
-  - id: setup-java21
+  - id: setup-java25
     exec:
       component: udi
-      commandLine: "source ~/.sdkman/bin/sdkman-init.sh 2>/dev/null; sdk install java 21.0.13.0+9-tem 2>/dev/null; sdk default java 21.0.13.0+9-tem 2>/dev/null; java -version"
+      commandLine: "source ~/.sdkman/bin/sdkman-init.sh 2>/dev/null; sdk install java 25.0.5.1+2-tem 2>/dev/null; sdk default java 25.0.5.1+2-tem 2>/dev/null; java -version"
 
   - id: verify-java
     exec:
@@ -94,7 +94,7 @@ commands:
   - id: run-offline
     exec:
       component: udi
-      commandLine: "cd /projects/calculadora-rtc-regime-regular && ./mvnw spring-boot:run -Dspring-boot.run.profiles=offline"
+      commandLine: "export JAVA_HOME=/home/tooling/.sdkman/candidates/java/25.0.5.1+2-tem PATH=/home/tooling/.sdkman/candidates/java/25.0.5.1+2-tem/bin:$PATH; cd /projects/calculadora-rtc-regime-regular && ./mvnw spring-boot:run -Dspring-boot.run.profiles=offline"
 
 events:
   postStart:
