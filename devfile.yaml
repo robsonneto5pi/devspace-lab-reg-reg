@@ -22,7 +22,7 @@ components:
       cpuRequest: 100m
       mountSources: true
       sourceMapping: /projects
-
+      env:
         - name: SERVER_PORT
           value: "8081"
       endpoints:
